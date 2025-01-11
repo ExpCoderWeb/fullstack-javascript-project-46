@@ -8,16 +8,21 @@ const getDiff = (data1, data2) => {
 
   const properties = sortedKeys
     .map((sortedKey) => {
-      if (!Object.hasOwn(data1, sortedKey)) { 
+      if (!Object.hasOwn(data1, sortedKey)) {
         return { key: sortedKey, value: data2[sortedKey], type: 'added' };
       }
 
-      if (!Object.hasOwn(data2, sortedKey)) { 
+      if (!Object.hasOwn(data2, sortedKey)) {
         return { key: sortedKey, value: data1[sortedKey], type: 'deleted' };
       }
 
-      if(data1[sortedKey] !== data2[sortedKey]) {
-        return { key: sortedKey, oldValue: data1[sortedKey], newValue: data2[sortedKey], type: 'changed' };
+      if (data1[sortedKey] !== data2[sortedKey]) {
+        return {
+          key: sortedKey,
+          oldValue: data1[sortedKey],
+          newValue: data2[sortedKey],
+          type: 'changed',
+        };
       }
 
       return { key: sortedKey, value: data1[sortedKey], type: 'unchanged' };
