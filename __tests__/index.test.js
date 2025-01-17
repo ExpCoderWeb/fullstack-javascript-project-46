@@ -2,6 +2,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
 import genDiff from '../src/index.js';
+import parseFile from '../src/parsers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,20 +14,51 @@ const mainJson2 = getFixturePath('file2.json');
 const emptyJson1 = getFixturePath('empty-file1.json');
 const emptyJson2 = getFixturePath('empty-file2.json');
 
-let expectedMainJson;
-let expectedEmptyJson;
+const mainYaml1 = getFixturePath('file1.yaml');
+const mainYaml2 = getFixturePath('file2.yaml');
+const emptyYaml1 = getFixturePath('empty-file1.yaml');
+const emptyYaml2 = getFixturePath('empty-file2.yaml');
 
-beforeAll(() => {
-  expectedMainJson = fs.readFileSync(getFixturePath('result-main.txt'), 'utf-8');
-  expectedEmptyJson = fs.readFileSync(getFixturePath('result-empty.txt'), 'utf-8');
-});
+const mainYml = getFixturePath('file.yml');
 
-describe('json', () => {
-  test('genDiff main case', () => {
-    expect(genDiff(mainJson1, mainJson2)).toEqual(expectedMainJson);
+const expectedStylish = fs.readFileSync(getFixturePath('result-stylish.txt'), 'utf-8');
+const expectedPlain = fs.readFileSync(getFixturePath('result-plain.txt'), 'utf-8');
+const expectedJson = fs.readFileSync(getFixturePath('result-json.txt'), 'utf-8');
+const expectedEmpty = fs.readFileSync(getFixturePath('result-empty.txt'), 'utf-8');
+
+describe('nested files', () => {
+  test('stylish', () => {
+    expect(genDiff(mainJson1, mainJson2, 'stylish')).toEqual(expectedStylish);
   });
 
-  test('genDiff empty files', () => {
-    expect(genDiff(emptyJson1, emptyJson2)).toEqual(expectedEmptyJson);
+  test('plain', () => {
+    expect(genDiff(mainYaml1, mainYaml2, 'plain')).toEqual(expectedPlain);
+  });
+
+  test('json', () => {
+    expect(genDiff(mainJson1, mainYml, 'json')).toEqual(expectedJson);
+  });
+
+  test('unstated format', () => {
+    expect(genDiff(mainYaml1, mainYaml2)).toEqual(expectedStylish);
+  });
+
+  test('unexisting format', () => {
+    expect(genDiff(mainYaml1, mainYaml2, 'smth different')).toEqual(expectedStylish);
+  });
+});
+
+describe('empty files', () => {
+  test('json', () => {
+    expect(genDiff(emptyJson1, emptyJson2)).toEqual(expectedEmpty);
+  });
+  test('yaml', () => {
+    expect(genDiff(emptyYaml1, emptyYaml2)).toEqual(expectedEmpty);
+  });
+});
+
+describe('parsers', () => {
+  test('parse invalid extension', () => {
+    expect(() => parseFile({ key: 'value' }, '.txt')).toThrow();
   });
 });
