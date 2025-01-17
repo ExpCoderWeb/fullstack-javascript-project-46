@@ -8,11 +8,11 @@ program
   .description('Compares two configuration files and shows a difference.')
   .version('1.0.0')
   .arguments('<filepath1> <filepath2>')
-  .option('-f, --format [type]', 'output format')
+  .option('-f, --format [type]', 'output format', 'stylish')
   .helpOption('-h, --help', 'output usage information')
   .action((filepath1, filepath2) => {
-    const formatter = program.opts().format;
-    console.log(genDiff(filepath1, filepath2, formatter));
+    const formatName = program.opts().format;
+    console.log(genDiff(filepath1, filepath2, formatName));
   });
 
 program.parse();
