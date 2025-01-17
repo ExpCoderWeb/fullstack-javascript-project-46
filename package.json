@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "Difference finder between 2 files",
+  "description": "Cli application that determines the difference between two data structures (JSON, YAML)",
   "bin": {
     "gendiff": "bin/gendiff.js"
   },
@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^13.0.0",
+    "js-yaml": "^4.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
