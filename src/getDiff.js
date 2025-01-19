@@ -16,7 +16,7 @@ const getDiff = (data1, data2) => {
       }
 
       if (data1[sortedKey] !== data2[sortedKey]) {
-        if (_.isObject(data1[sortedKey]) && _.isObject(data2[sortedKey])) {
+        if (_.isPlainObject(data1[sortedKey]) && _.isPlainObject(data2[sortedKey])) {
           return {
             key: sortedKey,
             value: 'object',
