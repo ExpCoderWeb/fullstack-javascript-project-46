@@ -1,13 +1,9 @@
-const transformValue = (value) => {
+const stringify = (value) => {
   if (typeof value === 'object' && value !== null) {
     return '[complex value]';
   }
 
-  if (typeof value === 'string') {
-    return `'${value}'`;
-  }
-
-  return value;
+  return typeof value === 'string' ? `'${value}'` : value;
 };
 
 const getPath = (keyPath) => {
@@ -17,29 +13,37 @@ const getPath = (keyPath) => {
   return newPath.join('.');
 };
 
-const plain = (properties) => {
-  const iter = (data, path = '') => {
-    const result = data
-      .flatMap((property) => {
-        const newPath = getPath([path, property.key]);
-        switch (property.type) {
+const plain = (tree) => {
+  const iter = (node, path = '') => {
+    const properties = node
+      .filter(({ type }) => type !== 'unchanged')
+      .map(({
+        type,
+        key,
+        value,
+        oldValue,
+        newValue,
+        children,
+      }) => {
+        const newPath = getPath([path, key]);
+        switch (type) {
           case 'added':
-            return `Property '${newPath}' was added with value: ${transformValue(property.value)}`;
+            return `Property '${newPath}' was added with value: ${stringify(value)}`;
           case 'deleted':
             return `Property '${newPath}' was removed`;
           case 'changed':
-            return `Property '${newPath}' was updated. From ${transformValue(property.oldValue)} to ${transformValue(property.newValue)}`;
+            return `Property '${newPath}' was updated. From ${stringify(oldValue)} to ${stringify(newValue)}`;
           case 'nested':
-            return iter(property.children, newPath);
+            return iter(children, newPath);
           default:
-            return [];
+            throw new Error(`Such type - ${type} doesn't exist`);
         }
       });
 
-    return result.join('\n');
+    return properties.join('\n');
   };
 
-  return iter(properties);
+  return iter(tree);
 };
 
 export default plain;
