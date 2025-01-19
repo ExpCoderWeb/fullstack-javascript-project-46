@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import genDiff from '../src/index.js';
 import parseFile from '../src/parsers.js';
+import stylish from '../src/formatters/stylish.js';
+import plain from '../src/formatters/plain.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,7 +60,23 @@ describe('empty files', () => {
 });
 
 describe('parsers', () => {
-  test('parse invalid extension', () => {
+  test('parse invalid file extension', () => {
     expect(() => parseFile({ key: 'value' }, '.txt')).toThrow();
+  });
+});
+
+describe('formatters when dealing with unsupported types', () => {
+  test('stylish', () => {
+    expect(() => stylish([
+      { key: 'value', type: 'added' },
+      { key: 'value', type: 'complex' },
+    ])).toThrow();
+  });
+
+  test('plain', () => {
+    expect(() => plain([
+      { key: 'value', type: 'unchanged' },
+      { key: 'value', type: 'complex' },
+    ])).toThrow();
   });
 });
