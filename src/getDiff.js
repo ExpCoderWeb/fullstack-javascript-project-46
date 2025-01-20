@@ -15,7 +15,7 @@ const getDiff = (data1, data2) => {
         return { key: sortedKey, value: data1[sortedKey], type: 'deleted' };
       }
 
-      if (data1[sortedKey] !== data2[sortedKey]) {
+      if (!_.isEqual(data1[sortedKey], data2[sortedKey])) {
         if (_.isPlainObject(data1[sortedKey]) && _.isPlainObject(data2[sortedKey])) {
           return {
             key: sortedKey,
