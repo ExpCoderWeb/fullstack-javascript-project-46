@@ -24,13 +24,14 @@ const emptyYaml2 = getFixturePath('empty-file2.yaml');
 const mainYml = getFixturePath('file.yml');
 
 const expectedStylish = fs.readFileSync(getFixturePath('result-stylish.txt'), 'utf-8');
+const expectedStylishWithArrayHandling = fs.readFileSync(getFixturePath('result-stylish-arr.txt'), 'utf-8');
 const expectedPlain = fs.readFileSync(getFixturePath('result-plain.txt'), 'utf-8');
 const expectedJson = fs.readFileSync(getFixturePath('result-json.txt'), 'utf-8');
 const expectedEmpty = fs.readFileSync(getFixturePath('result-empty.txt'), 'utf-8');
 
 describe('nested files', () => {
   test('stylish', () => {
-    expect(genDiff(mainJson1, mainJson2, 'stylish')).toEqual(expectedStylish);
+    expect(genDiff(mainJson1, mainJson2, 'stylish')).toEqual(expectedStylishWithArrayHandling);
   });
 
   test('plain', () => {
@@ -38,7 +39,7 @@ describe('nested files', () => {
   });
 
   test('json', () => {
-    expect(genDiff(mainJson1, mainYml, 'json')).toEqual(expectedJson);
+    expect(genDiff(mainYaml1, mainYml, 'json')).toEqual(expectedJson);
   });
 
   test('unstated format', () => {
@@ -54,6 +55,7 @@ describe('empty files', () => {
   test('json', () => {
     expect(genDiff(emptyJson1, emptyJson2)).toEqual(expectedEmpty);
   });
+
   test('yaml', () => {
     expect(genDiff(emptyYaml1, emptyYaml2)).toEqual(expectedEmpty);
   });
