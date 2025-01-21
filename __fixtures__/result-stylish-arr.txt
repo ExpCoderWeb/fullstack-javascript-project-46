@@ -8,11 +8,11 @@
           [],
           {},
           {
-          key: {
-                    nestedKey: {
-                        moreNestedKey: value
-                    }
+          key:              {
+             nestedKey:                 {
+                moreNestedKey:                    value
                 }
+             }
           },
           [
              1,
@@ -30,7 +30,7 @@
       + setting3: [
           hey,
           {
-          key: value
+          key:              value
           },
           [
              0
@@ -68,7 +68,7 @@
        item,
        0,
        {
-       key: value
+       key:           value
        }
     ]
 }
