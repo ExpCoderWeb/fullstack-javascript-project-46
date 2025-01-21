@@ -1,15 +1,17 @@
 import _ from 'lodash';
 
-// Для интереса и челленджа решил попробовать сделать также обработку массивов,
-// когда они являются значением ключа. Почти получилось, остаётся подшаманить
-// правильные отсупы у объектов, вложенных в массив.
+// Для интереса и челленджа решил также добавить развернутый вывод массивов,
+// когда они являются значением ключа. Что-то получилось, но поймал затык
+// по отступам и скобкам объектов, вложенных в массив.
 const replacer = ' ';
 const spacesCount = 4;
+const indentShift = 2;
+
 const spacesCountForArray = 3;
 const indentShiftForArray = 2;
 
 const getCurrentAndBracketIndents = (depth) => {
-  const currentIndent = replacer.repeat(depth * spacesCount - 2);
+  const currentIndent = replacer.repeat(depth * spacesCount - indentShift);
   const closingBracketIndent = replacer.repeat(depth * spacesCount - spacesCount);
 
   return [currentIndent, closingBracketIndent];
@@ -22,13 +24,15 @@ const getCurrentAndBracketIndentsArr = (depth) => {
   return [currentIndent, closingBracketIndent];
 };
 
+// Для обработки только объектов, которые имеют ключи type, т.е.
+// которые и надо обрабатывать в проекте
 const stringify = (node, depth) => {
   if (!_.isPlainObject(node)) {
     return `${node}`;
   }
 
   const [currentIndent, closingBracketIndent] = getCurrentAndBracketIndents(depth + 1);
-  const extraIndent = '  ';
+  const extraIndent = replacer.repeat(indentShift);
 
   const properties = Object
     .entries(node)
@@ -41,8 +45,9 @@ const stringify = (node, depth) => {
   ].join('\n');
 };
 
+// Для обработки массивов, объектов внутри массивов, назовем это доп.задачей
 const stringifyArr = (node, depth) => {
-  const [currentIndent, closingBracketIndent] = getCurrentAndBracketIndentsArr(depth + 1);
+  const [currentIndent] = getCurrentAndBracketIndentsArr(depth + 1);
 
   if (!_.isObject(node)) {
     return `${currentIndent}${node}`;
@@ -57,12 +62,13 @@ const stringifyArr = (node, depth) => {
       .map((item) => stringifyArr(item, depth + 1));
 
     const lines = items.join(',\n');
-    return `${currentIndent}[\n${lines}\n ${closingBracketIndent}]`;
+
+    return `${currentIndent}[\n${lines}\n${currentIndent}]`;
   }
 
   const properties = Object
     .entries(node)
-    .map(([key, value]) => `${currentIndent}${key}: ${stringify(value, depth + 1)}`);
+    .map(([key, value]) => `${currentIndent}${key}: ${stringifyArr(value, depth + 1)}`);
 
   if (properties.length === 0) {
     return `${currentIndent}{}`;
@@ -81,14 +87,17 @@ const stylish = (tree) => {
 
     if (Array.isArray(node) && !node[0]?.type) {
       if (node.length === 0) {
-        return '[]';
+        return 'both files are empty';
       }
 
       const items = node
         .map((item) => stringifyArr(item, depth + 1));
 
       const lines = items.join(',\n');
-      return `[\n${lines}\n${replacer.repeat(spacesCount)}${closingBracketIndent}]`;
+
+      const extraIndent = replacer.repeat(spacesCount);
+
+      return `[\n${lines}\n${extraIndent}${closingBracketIndent}]`;
     }
 
     if (Array.isArray(node)) {
