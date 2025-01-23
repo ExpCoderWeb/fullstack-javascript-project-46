@@ -87,7 +87,7 @@ const stylish = (tree) => {
 
     if (Array.isArray(node) && !node[0]?.type) {
       if (node.length === 0) {
-        return 'both files are empty';
+        return 'Both files are empty';
       }
 
       const items = node
