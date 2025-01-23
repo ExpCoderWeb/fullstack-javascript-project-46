@@ -27,9 +27,8 @@ const expectedStylish = fs.readFileSync(getFixturePath('result-stylish.txt'), 'u
 const expectedStylishWithArrayHandling = fs.readFileSync(getFixturePath('result-stylish-arr.txt'), 'utf-8');
 const expectedPlain = fs.readFileSync(getFixturePath('result-plain.txt'), 'utf-8');
 const expectedJson = fs.readFileSync(getFixturePath('result-json.txt'), 'utf-8');
-const expectedEmpty = fs.readFileSync(getFixturePath('result-empty.txt'), 'utf-8');
 
-describe('nested files', () => {
+describe('main files in different formats', () => {
   test('stylish', () => {
     expect(genDiff(mainJson1, mainJson2, 'stylish')).toEqual(expectedStylishWithArrayHandling);
   });
@@ -47,23 +46,21 @@ describe('nested files', () => {
   });
 
   test('unexisting format', () => {
-    expect(genDiff(mainYaml1, mainYaml2, 'smth different')).toEqual(expectedStylish);
+    expect(() => genDiff(mainJson1, mainYaml2, 'nested')).toThrow();
   });
 });
 
-describe('empty files', () => {
+describe('empty files in different formats', () => {
+  test('stylish', () => {
+    expect(genDiff(emptyJson1, emptyYaml2, 'stylish')).toEqual('Both files are empty');
+  });
+
+  test('plain', () => {
+    expect(genDiff(emptyYaml1, emptyJson2, 'plain')).toEqual('Both files are empty');
+  });
+
   test('json', () => {
-    expect(genDiff(emptyJson1, emptyJson2)).toEqual(expectedEmpty);
-  });
-
-  test('yaml', () => {
-    expect(genDiff(emptyYaml1, emptyYaml2)).toEqual(expectedEmpty);
-  });
-});
-
-describe('parsers', () => {
-  test('parse invalid file extension', () => {
-    expect(() => parseFile({ key: 'value' }, '.txt')).toThrow();
+    expect(genDiff(emptyYaml1, emptyYaml2, 'json')).toEqual('[]');
   });
 });
 
@@ -80,5 +77,11 @@ describe('formatters when dealing with unsupported types', () => {
       { key: 'value', type: 'unchanged' },
       { key: 'value', type: 'complex' },
     ])).toThrow();
+  });
+});
+
+describe('parsers', () => {
+  test('parse invalid file extension', () => {
+    expect(() => parseFile({ key: 'value' }, '.txt')).toThrow();
   });
 });
