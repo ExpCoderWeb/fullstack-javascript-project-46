@@ -10,7 +10,7 @@ const getFullPath = (filepath) => path.resolve(process.cwd(), filepath);
 
 const getExtension = (filepath) => path.extname(filepath);
 
-const genDiff = (filepath1, filepath2, formatName) => {
+const genDiff = (filepath1, filepath2, formatName = 'stylish') => {
   const readFile1 = readFile(getFullPath(filepath1));
   const readFile2 = readFile(getFullPath(filepath2));
 
