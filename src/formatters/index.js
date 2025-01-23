@@ -10,7 +10,7 @@ const getFormatter = (formatName) => {
     case 'json':
       return JSON.stringify;
     default:
-      return stylish;
+      throw new Error(`Invalid format - ${formatName}`);
   }
 };
 
