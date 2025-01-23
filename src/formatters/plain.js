@@ -17,6 +17,10 @@ const getPath = (keyPath) => {
 
 const plain = (tree) => {
   const iter = (node, path = '') => {
+    if (node.length === 0) {
+      return 'Both files are empty';
+    }
+
     const properties = node
       .filter(({ type }) => type !== 'unchanged')
       .map(({
