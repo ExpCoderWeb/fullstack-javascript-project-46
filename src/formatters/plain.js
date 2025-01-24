@@ -8,13 +8,6 @@ const stringify = (value) => {
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-const getPath = (keyPath) => {
-  const [oldPath, addedKey] = keyPath;
-  const newPath = !oldPath ? [addedKey] : keyPath;
-
-  return newPath.join('.');
-};
-
 const plain = (tree) => {
   const iter = (node, path = '') => {
     if (node.length === 0) {
@@ -31,7 +24,7 @@ const plain = (tree) => {
         newValue,
         children,
       }) => {
-        const newPath = getPath([path, key]);
+        const newPath = path === '' ? key : `${path}.${key}`;
         switch (type) {
           case 'added':
             return `Property '${newPath}' was added with value: ${stringify(value)}`;
